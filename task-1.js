@@ -1,5 +1,4 @@
-const conversationDataJSON =
-  '{"distance": {"unit": "m", "value": 0.5}, "convert_to": "ft"}';
+const conversationDataJSON = `{"distance": {"unit": "m", "value": 0.5}, "convert_to": "ft"}`;
 
 const conversationParams = [
   { inputUnitName: "m", outputUnitName: "ft", conversionFactor: 3.28084 },
@@ -35,16 +34,23 @@ const conversationParams = [
 ];
 
 function getConvertValue(dataJSON, params) {
+  if (!dataJSON) return "No data to convert";
+
   const data = JSON.parse(dataJSON);
+
+  if (!data || typeof data !== "object" || Object.keys(data).length === 0)
+    return "There is no data to convert or their format cannot be processed!";
+  if (!params || typeof params !== "object" || Object.keys(params).length === 0)
+    return "Parameters for conversion were not transferred or their format is not supported!";
 
   const conversationResult = params.reduce((result, param) => {
     if (
-      param.inputUnitName === data.distance.unit &&
-      param.outputUnitName === data.convert_to
+      param.inputUnitName === data?.distance?.unit &&
+      param.outputUnitName === data?.convert_to
     ) {
       result.unit = data.convert_to;
       result.value = Number(
-        (data.distance.value * param.conversionFactor).toFixed(2)
+        (data?.distance?.value * param.conversionFactor).toFixed(2)
       );
     }
 
@@ -54,4 +60,7 @@ function getConvertValue(dataJSON, params) {
   return JSON.stringify(conversationResult);
 }
 
-console.log(getConvertValue(conversationDataJSON, conversationParams));
+console.log(
+  "%c" + getConvertValue(conversationDataJSON, conversationParams),
+  "color: greenyellow"
+);
